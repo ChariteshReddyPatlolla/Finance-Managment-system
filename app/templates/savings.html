@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance App - Savings Goals</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/savings.css') }}">
+</head>
+<body>
+    <!-- Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
+            <h3>{{ current_user.username}}</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-title">Menu</div>
+            <a href="/dashboard" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/income" class="menu-item">
+                <i class="fas fa-wallet"></i>
+                <span>Income</span>
+            </a>
+            <a href="/reports" class="menu-item">
+                <i class="fas fa-chart-pie"></i>
+                <span>Reports</span>
+            </a>
+            <a href="/savings" class="menu-item active">
+                <i class="fas fa-piggy-bank"></i>
+                <span>Savings</span>
+            </a>
+            <a href="/transaction" class="menu-item">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Transactions</span>
+            </a>
+            
+            <div class="menu-title">Settings</div>
+            <a href="/profile" class="menu-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="/settings" class="menu-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div style="display: flex; align-items: center;">
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Savings Goals</h1>
+            </div>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="theme-toggle">
+                    <span class="light"><i class="fas fa-sun"></i></span>
+                    <span class="dark"><i class="fas fa-moon"></i></span>
+                </div>
+                <div class="user-profile">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
+                    <div class="user-info">
+                        <h4>{{ current_user.username}}</h4>
+                        <p>Premium Member</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Savings Content -->
+        <div class="container">
+            <div class="savings-stats">
+                <div class="stat-card">
+                    <h3>Total Goals</h3>
+                    <p id="total-goals">5</p>
+                    <div class="progress-text">3 active, 2 completed</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Saved</h3>
+                    <p id="total-saved">₹85,500</p>
+                    <div class="progress-text">42% of total target</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Closest Deadline</h3>
+                    <p>Vacation Fund</p>
+                    <div class="progress-text warning">12 days left</div>
+                </div>
+            </div>
+            
+            <div class="savings-header">
+                <div class="filter-bar">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="active">Active</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                    <button class="filter-btn" data-filter="high">High Priority</button>
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search goals..." id="goal-search">
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="add-goal-btn">
+                    <i class="fas fa-plus btn-icon"></i>
+                    New Goal
+                </button>
+            </div>
+            
+            <div class="goals-grid" id="goals-container">
+                <!-- Goals will be dynamically inserted here -->
+            </div>
+            
+            <div class="transactions-section">
+                <div class="transactions-header">
+                    <h2>Recent Transactions</h2>
+                    <button class="btn btn-secondary" id="view-all-transactions">
+                        View All
+                    </button>
+                </div>
+                <table class="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Goal</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-list">
+                        <!-- Transactions will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add/Edit Goal Modal -->
+    <div class="modal" id="goal-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add New Savings Goal</h2>
+                <button class="modal-close" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="goal-form">
+                    <input type="hidden" id="goal-id">
+                    <div class="form-group">
+                        <label for="goal-name">Goal Name</label>
+                        <input type="text" id="goal-name" class="form-control" placeholder="e.g., Emergency Fund" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="target-amount">Target Amount (₹)</label>
+                        <input type="number" id="target-amount" class="form-control" placeholder="e.g., 50000" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="current-amount">Current Amount (₹)</label>
+                        <input type="number" id="current-amount" class="form-control" placeholder="e.g., 10000" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="deadline">Deadline</label>
+                        <input type="date" id="deadline" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="priority">Priority</label>
+                        <select id="priority" class="form-control select-control" required>
+                            <option value="">Select priority</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description (Optional)</label>
+                        <textarea id="description" class="form-control" rows="3" placeholder="Add any notes about this goal..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-goal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Goal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Deposit Modal -->
+    <div class="modal" id="deposit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Money to Goal</h2>
+                <button class="modal-close" id="close-deposit-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="deposit-form">
+                    <input type="hidden" id="deposit-goal-id">
+                    <div class="form-group">
+                        <label for="transaction-type">Transaction Type</label>
+                        <select id="transaction-type" class="form-control select-control" required>
+                            <option value="deposit">Deposit</option>
+                            <option value="withdrawal">Withdrawal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="transaction-amount">Amount (₹)</label>
+                        <input type="number" id="transaction-amount" class="form-control" placeholder="e.g., 5000" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="transaction-date">Date</label>
+                        <input type="date" id="transaction-date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="transaction-notes">Notes (Optional)</label>
+                        <textarea id="transaction-notes" class="form-control" rows="3" placeholder="Add any notes about this transaction..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-deposit">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Transaction</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/savings.js') }}"></script>
+</body>
+</html>

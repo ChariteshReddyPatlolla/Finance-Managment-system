@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Analytics Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reports.css') }}">
+</head>
+<body>
+    <!-- Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Sidebar Navigation - Matching your dashboard -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
+            <h3>{{ current_user.username}}</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-title">Menu</div>
+            <a href="/dashboard" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/income" class="menu-item">
+                <i class="fas fa-wallet"></i>
+                <span>Income</span>
+            </a>
+            <a href="#" class="menu-item active">
+                <i class="fas fa-chart-pie"></i>
+                <span>Reports</span>
+            </a>
+            <a href="/savings" class="menu-item">
+                <i class="fas fa-piggy-bank"></i>
+                <span>Savings</span>
+            </a>
+            <a href="/transaction" class="menu-item">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Transactions</span>
+            </a>
+            <div class="menu-title">Settings</div>
+            <a href="/profile" class="menu-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="/settings" class="menu-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div style="display: flex; align-items: center;">
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Financial Reports</h1>
+            </div>
+            <div class="date-filter">
+                <button class="filter-btn active">This Month</button>
+                <button class="filter-btn">Last Quarter</button>
+                <button class="filter-btn">This Year</button>
+                <div class="custom-range">
+                    <input type="date" id="start-date">
+                    <span>to</span>
+                    <input type="date" id="end-date">
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="cards">
+            <div class="card">
+                <h3>Total Income</h3>
+                <div class="value">₹{{total_income}}</div>
+            </div>
+            <div class="card">
+                <h3>Total Expenses</h3>
+                <div class="value">₹{{total_expenses}}</div>
+            </div>
+            <div class="card">
+                <h3>Savings</h3>
+                <div class="value">₹{{total_savings}}</div>
+                <div class="change positive">
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Net Worth</h3>
+                <div class="value">{{net_worth}}</div>
+                <div class="change positive">
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+
+     <!-- Charts Row 1 -->
+        <div class="chart-row">
+            <div class="chart-wrapper">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>Income vs Expenses</h2>
+                        <div class="chart-actions">
+                            <button title="Zoom in"><i class="fas fa-search-plus"></i></button>
+                            <button title="Reset zoom"><i class="fas fa-sync-alt"></i></button>
+                            <button title="Download"><i class="fas fa-download"></i></button>
+                        </div>
+                    </div>
+                    <canvas id="incomeExpenseChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-wrapper">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>Spending by Category</h2>
+                        <div class="chart-actions">
+                            <button title="Download"><i class="fas fa-download"></i></button>
+                        </div>
+                    </div>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row 2 -->
+        <div class="chart-row">
+            <div class="chart-wrapper">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>Net Worth Trend</h2>
+                        <div class="chart-actions">
+                            <button title="Zoom in"><i class="fas fa-search-plus"></i></button>
+                            <button title="Reset zoom"><i class="fas fa-sync-alt"></i></button>
+                            <button title="Download"><i class="fas fa-download"></i></button>
+                        </div>
+                    </div>
+                    <canvas id="netWorthChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-wrapper">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>Cash Flow</h2>
+                        <div class="chart-actions">
+                            <button title="Download"><i class="fas fa-download"></i></button>
+                        </div>
+                    </div>
+                    <canvas id="cashFlowChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Table -->
+        <div class="transactions">
+            <h2>Recent Transactions</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Payment Method</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.date.strftime('%b %d, %Y') }}</td>
+                        <td>{{ transaction.description }}</td>
+                        <td>
+                            <div class="category">
+                                <span>{{ transaction.category }}</span>
+                            </div>
+                        </td>
+                        <td>{{ transaction.payment_method }}</td>
+                        <td class="{% if transaction.type == 'income' %}income{% else %}expense{% endif %}">
+                            {% if transaction.type == 'income' %}+{% else %}-{% endif %}₹{{ "%.2f"|format(transaction.amount) }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="actions">
+                <button class="btn btn-outline">View All</button>
+                <a href="/export/transactions/csv" class="btn btn-primary">Export CSV</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+</body>
+</html>

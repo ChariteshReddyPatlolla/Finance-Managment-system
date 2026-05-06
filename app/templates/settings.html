@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | Finance App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
+            <h3>{{ current_user.username}}</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-title">Menu</div>
+            <a href="/dashboard" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/income" class="menu-item">
+                <i class="fas fa-wallet"></i>
+                <span>Income</span>
+            </a>
+            <a href="/reports" class="menu-item">
+                <i class="fas fa-chart-pie"></i>
+                <span>Reports</span>
+            </a>
+            <a href="/savings" class="menu-item">
+                <i class="fas fa-piggy-bank"></i>
+                <span>Savings</span>
+            </a>
+            <a href="/transaction" class="menu-item">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Transactions</span>
+            </a>
+            
+            <div class="menu-title">Settings</div>
+            <a href="/profile" class="menu-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="/settings" class="menu-item active">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h1>Settings</h1>
+        </div>
+
+        <!-- Settings Tabs -->
+        <div class="settings-tabs">
+            <button class="tab-btn active" data-tab="account">Account</button>
+            <button class="tab-btn" data-tab="financial">Financial</button>
+            <button class="tab-btn" data-tab="notifications">Notifications</button>
+            <button class="tab-btn" data-tab="privacy">Privacy</button>
+            <button class="tab-btn" data-tab="display">Display</button>
+            <button class="tab-btn" data-tab="budget">Budget Rules</button>
+            <button class="tab-btn" data-tab="backup">Backup</button>
+            <button class="tab-btn" data-tab="help">Help</button>
+        </div>
+
+        <!-- Account Settings -->
+        <div class="settings-content active" id="account-tab">
+            <!-- Profile Information -->
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-user-circle"></i> Profile Information</h2>
+                <div class="avatar-upload">
+                    <div class="avatar-preview">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile Photo">
+                    </div>
+                    <div class="avatar-actions">
+                        <button class="btn btn-secondary btn-sm">
+                            <i class="fas fa-upload"></i> Upload New
+                        </button>
+                        <button class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash-alt"></i> Remove
+                        </button>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-control" value="{{profile_data.firstName}}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-control" value="{{profile_data.lastName}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" value="{{ current_user.email}}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" value="{{profile_data.phone}}">
+                </div>
+                
+            </div>
+
+            <!-- Login & Security -->
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-shield-alt"></i> Login & Security</h2>
+                <form id="passwordChangeForm" method="POST">
+                    <div class="form-group">
+                        <label class="form-label">Change Password</label>
+                        <div class="input-with-icon">
+                            <input type="password" class="form-control" placeholder="Current password" 
+                                   id="currentPassword" name="current_password">
+                            <i class="fas fa-eye input-icon toggle-password"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <input type="password" class="form-control" placeholder="New password" 
+                                   id="newPassword" name="new_password">
+                            <i class="fas fa-eye input-icon toggle-password"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <input type="password" class="form-control" placeholder="Confirm new password" 
+                                   id="confirmPassword" name="confirm_password">
+                            <i class="fas fa-eye input-icon toggle-password"></i>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                    <div id="passwordMessage" class="message mt-2"></div>
+                </form>
+            </div>
+
+            <!-- Two-Factor Authentication -->
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-lock"></i> Two-Factor Authentication</h2>
+                <div class="toggle-item">
+                    <div class="toggle-info">
+                        <h4>Email Verification</h4>
+                        <p>Receive a code via email when logging in</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-info">
+                        <h4>SMS Verification</h4>
+                        <p>Receive a code via SMS when logging in</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-item" style="border-bottom: none;">
+                    <div class="toggle-info">
+                        <h4>Authenticator App</h4>
+                        <p>Use an authenticator app for 2FA</p>
+                    </div>
+                    <button class="btn btn-secondary btn-sm">Setup</button>
+                </div>
+            </div>
+
+            <!-- Connected Devices -->
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-laptop"></i> Connected Devices</h2>
+                <div class="device-item">
+                    <div class="device-info">
+                        <div class="device-icon">
+                            <i class="fas fa-laptop"></i>
+                        </div>
+                        <div class="device-details">
+                            <h4>MacBook Pro</h4>
+                            <p>Chrome • New York, USA • Active now</p>
+                        </div>
+                    </div>
+                    <div class="device-action">
+                        <button><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </div>
+                </div>
+                <div class="device-item">
+                    <div class="device-info">
+                        <div class="device-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="device-details">
+                            <h4>iPhone 13</h4>
+                            <p>Safari • New York, USA • 2 hours ago</p>
+                        </div>
+                    </div>
+                    <div class="device-action">
+                        <button><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </div>
+                </div>
+                <div class="device-item" style="border-bottom: none;">
+                    <div class="device-info">
+                        <div class="device-icon">
+                            <i class="fas fa-desktop"></i>
+                        </div>
+                        <div class="device-details">
+                            <h4>Windows PC</h4>
+                            <p>Firefox • Chicago, USA • 1 week ago</p>
+                        </div>
+                    </div>
+                    <div class="device-action">
+                        <button><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Deletion -->
+            <div class="settings-card">
+                <div class="danger-zone">
+                    <div class="danger-title">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Danger Zone</span>
+                    </div>
+                    <p class="danger-text">
+                        Deleting your account will permanently remove all your data including transactions, reports, and settings. This action cannot be undone.
+                    </p>
+                    <button class="btn btn-danger" style="width: 100%;">
+                        <i class="fas fa-trash-alt"></i> Delete Account Permanently
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Preferences -->
+        <div class="settings-content" id="financial-tab">
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-money-bill-wave"></i> Financial Preferences</h2>
+                <div class="form-group">
+                    <label class="form-label">Default Currency</label>
+                    <select class="form-control">
+                        <option>US Dollar (USD)</option>
+                        <option>Euro (EUR)</option>
+                        <option>British Pound (GBP)</option>
+                        <option>Japanese Yen (JPY)</option>
+                        <option>Canadian Dollar (CAD)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tax Identification Number (Optional)</label>
+                    <input type="text" class="form-control" placeholder="Enter your tax ID">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Filing Status</label>
+                    <select class="form-control">
+                        <option>Single</option>
+                        <option>Married Filing Jointly</option>
+                        <option>Married Filing Separately</option>
+                        <option>Head of Household</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Primary Income Frequency</label>
+                    <select class="form-control">
+                        <option>Monthly</option>
+                        <option>Bi-Weekly</option>
+                        <option>Weekly</option>
+                        <option>Annually</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary">Save Preferences</button>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="settings-content" id="notifications-tab">
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-envelope"></i> Email Notifications</h2>
+                <div class="toggle-item">
+                    <div class="toggle-info">
+                        <h4>Transaction Alerts</h4>
+                        <p>Receive emails for large or unusual transactions</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-info">
+                        <h4>Budget Warnings</h4>
+                        <p>Get notified when approaching budget limits</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-info">
+                        <h4>Investment Updates</h4>
+                        <p>Weekly summaries of your investment portfolio</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-item" style="border-bottom: none;">
+                    <div class="toggle-info">
+                        <h4>Newsletter</h4>
+                        <p>Monthly finance tips and app updates</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-bell"></i> Push Notifications</h2>
+                <div class="toggle-item">
+                    <div class="toggle-info">
+                        <h4>Real-time Spending</h4>
+                        <p>Instant alerts for transactions</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-info">
+                        <h4>Group Sharing Updates</h4>
+                        <p>Notifications for shared expenses</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-item" style="border-bottom: none;">
+                    <div class="toggle-info">
+                        <h4>Bill Reminders</h4>
+                        <p>Alerts for upcoming bill payments</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-sms"></i> SMS Notifications</h2>
+                <div class="toggle-item" style="border-bottom: none;">
+                    <div class="toggle-info">
+                        <h4>Enable SMS Alerts</h4>
+                        <p>Receive important alerts via text message</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacy & Sharing -->
+        <div class="settings-content" id="privacy-tab">
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-users"></i> Group Sharing</h2>
+                <div class="toggle-item">
+                    <div class="toggle-info">
+                        <h4>Enable Group Sharing</h4>
+                        <p>Allow sharing expenses with family and friends</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Default Sharing Visibility</label>
+                    <select class="form-control">
+                        <option>Private (Only me)</option>
+                        <option selected>Shared Groups</option>
+                        <option>Public (All connections)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Monthly Spending Limit Visibility</label>
+                    <input type="text" class="form-control" placeholder="Enter amount (e.g., 1000)" value="500">
+                    <span class="hint">Amount above which your spending details will be hidden from group members</span>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-database"></i> Data Management</h2>
+                <div class="form-group">
+                    <label class="form-label">Export Data</label>
+                    <select class="form-control">
+                        <option>Select format to export</option>
+                        <option>CSV (Excel compatible)</option>
+                        <option>PDF Report</option>
+                        <option>JSON (All data)</option>
+                    </select>
+                </div>
+                <button class="btn btn-secondary" style="margin-right: 10px;">
+                    <i class="fas fa-download"></i> Export Data
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-upload"></i> Import Data
+                </button>
+            </div>
+
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-plug"></i> Third-Party Connections</h2>
+                <div class="toggle-item" style="border-bottom: none;">
+                    <div class="toggle-info">
+                        <h4>Allow Third-Party Apps</h4>
+                        <p>Enable connections with other financial apps</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Display & Theme -->
+        <div class="settings-content" id="display-tab">
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-palette"></i> Appearance</h2>
+                <div class="toggle-item">
+                    <div class="toggle-info">
+                        <h4>Dark Mode</h4>
+                        <p>Switch between light and dark theme</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Dashboard Layout</label>
+                    <select class="form-control">
+                        <option>Default</option>
+                        <option>Compact</option>
+                        <option>Detailed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Font Size</label>
+                    <select class="form-control">
+                        <option>Small</option>
+                        <option selected>Medium</option>
+                        <option>Large</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary">Apply Changes</button>
+            </div>
+
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-th-large"></i> Dashboard Widgets</h2>
+                <div class="toggle-item">
+                    <div class="toggle-info">
+                        <h4>Show Savings Widget</h4>
+                        <p>Display your savings progress on dashboard</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-info">
+                        <h4>Show Investments Widget</h4>
+                        <p>Display investment portfolio summary</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-info">
+                        <h4>Show Recent Transactions</h4>
+                        <p>Display last 5 transactions on dashboard</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-item" style="border-bottom: none;">
+                    <div class="toggle-info">
+                        <h4>Show Spending Chart</h4>
+                        <p>Display monthly spending visualization</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget Rules -->
+        <div class="settings-content" id="budget-tab">
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-robot"></i> Auto-Budgeting Rules</h2>
+                <div class="form-group">
+                    <label class="form-label">Rule #1</label>
+                    <div class="input-with-icon" style="display: flex; gap: 10px;">
+                        <select class="form-control" style="flex: 1;">
+                            <option>If income exceeds</option>
+                            <option>If savings fall below</option>
+                            <option>When category spending exceeds</option>
+                        </select>
+                        <input type="text" class="form-control" placeholder="Amount" style="width: 100px;">
+                        <select class="form-control" style="flex: 1;">
+                            <option>allocate to savings</option>
+                            <option>send alert</option>
+                            <option>limit spending</option>
+                        </select>
+                        <input type="text" class="form-control" placeholder="Amount" style="width: 100px;">
+                    </div>
+                </div>
+                <button class="btn btn-secondary" style="margin-right: 10px;">
+                    <i class="fas fa-plus"></i> Add Rule
+                </button>
+                <button class="btn btn-primary">
+                    Save Rules
+                </button>
+            </div>
+
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-bell"></i> Recurring Expense Alerts</h2>
+                <div class="toggle-item">
+                    <div class="toggle-info">
+                        <h4>Subscription Price Changes</h4>
+                        <p>Notify me if subscription costs increase</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-info">
+                        <h4>Annual Fee Reminders</h4>
+                        <p>Alert me about upcoming annual fees</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-item" style="border-bottom: none;">
+                    <div class="toggle-info">
+                        <h4>Irregular Spending</h4>
+                        <p>Notify about unusual spending patterns</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backup & Data Management -->
+        <div class="settings-content" id="backup-tab">
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-cloud-upload-alt"></i> Backup Options</h2>
+                <div class="backup-options">
+                    <div class="backup-card active">
+                        <div class="backup-icon">
+                            <i class="fab fa-google-drive"></i>
+                        </div>
+                        <div class="backup-title">Google Drive</div>
+                        <div class="backup-desc">Automatic daily backups</div>
+                    </div>
+                    <div class="backup-card">
+                        <div class="backup-icon">
+                            <i class="fab fa-apple"></i>
+                        </div>
+                        <div class="backup-title">iCloud</div>
+                        <div class="backup-desc">Secure Apple cloud storage</div>
+                    </div>
+                    <div class="backup-card">
+                        <div class="backup-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <div class="backup-title">Local Backup</div>
+                        <div class="backup-desc">Download encrypted file</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Backup Frequency</label>
+                    <select class="form-control">
+                        <option>Daily</option>
+                        <option selected>Weekly</option>
+                        <option>Monthly</option>
+                        <option>Manual Only</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" style="margin-right: 10px;">
+                    <i class="fas fa-sync"></i> Backup Now
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-history"></i> Restore Backup
+                </button>
+            </div>
+        </div>
+
+        <!-- Help & Support -->
+        <div class="settings-content" id="help-tab">
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-question-circle"></i> Help Center</h2>
+                <div class="form-group">
+                    <label class="form-label">Search Help Articles</label>
+                    <div class="input-with-icon">
+                        <input type="text" class="form-control" placeholder="How to...">
+                        <i class="fas fa-search input-icon"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-secondary" style="margin-right: 10px; margin-bottom: 10px;">
+                        <i class="fas fa-file-alt"></i> User Guide
+                    </button>
+                    <button class="btn btn-secondary" style="margin-right: 10px; margin-bottom: 10px;">
+                        <i class="fas fa-video"></i> Tutorial Videos
+                    </button>
+                    <button class="btn btn-secondary" style="margin-bottom: 10px;">
+                        <i class="fas fa-question"></i> FAQs
+                    </button>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-headset"></i> Contact Support</h2>
+                <div class="form-group">
+                    <label class="form-label">Subject</label>
+                    <select class="form-control">
+                        <option>General Question</option>
+                        <option>Bug Report</option>
+                        <option>Feature Request</option>
+                        <option>Account Issue</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message</label>
+                    <textarea class="form-control" rows="5" placeholder="Describe your issue..."></textarea>
+                </div>
+                <button class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Send Message
+                </button>
+            </div>
+
+            <div class="settings-card">
+                <h2 class="settings-title"><i class="fas fa-lightbulb"></i> Feedback</h2>
+                <div class="form-group">
+                    <label class="form-label">How would you rate our app?</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <i class="fas fa-star" style="color: gold; font-size: 20px;"></i>
+                        <i class="fas fa-star" style="color: gold; font-size: 20px;"></i>
+                        <i class="fas fa-star" style="color: gold; font-size: 20px;"></i>
+                        <i class="fas fa-star" style="color: gold; font-size: 20px;"></i>
+                        <i class="far fa-star" style="color: gold; font-size: 20px;"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Suggestions for improvement</label>
+                    <textarea class="form-control" rows="3" placeholder="What can we do better?"></textarea>
+                </div>
+                <button class="btn btn-primary">
+                    <i class="fas fa-check"></i> Submit Feedback
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
+            <h3>{{ current_user.username}}</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-title">Menu</div>
+            <a href="/dashboard" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/income" class="menu-item">
+                <i class="fas fa-wallet"></i>
+                <span>Income</span>
+            </a>
+            <a href="/reports" class="menu-item">
+                <i class="fas fa-chart-pie"></i>
+                <span>Reports</span>
+            </a>
+            <a href="/savings" class="menu-item">
+                <i class="fas fa-piggy-bank"></i>
+                <span>Savings</span>
+            </a>
+            <a href="/transaction" class="menu-item">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Transactions</span>
+            </a>
+            
+            <div class="menu-title">Settings</div>
+            <a href="/profile" class="menu-item active">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="/settings" class="menu-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h1>Profile Settings</h1>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-photo">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile Photo">
+                    <div class="profile-photo-edit" id="editPhotoBtn">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <h2 class="profile-name">{{ current_user.username}}</h2>
+                <p class="profile-email">{{ current_user.email}}</p>
+                
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">₹{{balance}}</div>
+                        <div class="stat-label">Balance</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{total_transactions}}</div>
+                        <div class="stat-label">Transactions</div>
+                    </div>
+                </div>
+                
+                <div class="profile-actions">
+                    <button class="action-btn primary">
+                        <i class="fas fa-share-alt"></i> Share Profile
+                    </button>
+                    <button class="action-btn secondary">
+                        <i class="fas fa-qrcode"></i> My QR Code
+                    </button>
+                </div>
+            </div>
+
+            <!-- Settings Card -->
+            <div class="settings-card">
+                <div class="settings-tabs">
+                    <button class="tab-btn active" data-tab="personal">Personal Info</button>
+                    <button class="tab-btn" data-tab="security">Security</button>
+                    <button class="tab-btn" data-tab="privacy">Privacy</button>
+                </div>
+
+                <!-- Personal Info Tab -->
+                <!-- Personal Info Tab -->
+            <div class="settings-content active" id="personal-tab">
+                <form id="profileForm">
+                    <div class="settings-group">
+                        <h3 class="settings-title">Basic Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" 
+                                    value="{{ profile_data.firstName }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName"
+                                    value="{{ profile_data.lastName }}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" value="{{ current_user.email }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone"
+                                value="{{ profile_data.phone }}">
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3 class="settings-title">Address Information</h3>
+                        <div class="form-group">
+                            <label class="form-label">Street Address</label>
+                            <input type="text" class="form-control" id="street"
+                                value="{{ profile_data.street }}">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control" id="city"
+                                    value="{{ profile_data.city }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Zip Code</label>
+                                <input type="text" class="form-control" id="zipCode"
+                                    value="{{ profile_data.zipCode }}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Country</label>
+                            <select class="form-control" id="country">
+                                <option value="United States" {% if profile_data.country == 'United States' %}selected{% endif %}>United States</option>
+                                <option value="Canada" {% if profile_data.country == 'Canada' %}selected{% endif %}>Canada</option>
+                                <option value="United Kingdom" {% if profile_data.country == 'United Kingdom' %}selected{% endif %}>United Kingdom</option>
+                                <option value="United Kingdom" {% if profile_data.country == 'India' %}selected{% endif %}>India</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </form>
+            </div>
+
+                <!-- Security Tab -->
+                <div class="settings-content" id="security-tab">
+                    <div class="settings-group">
+                        <h3 class="settings-title">Password</h3>
+                        <form id="passwordChangeForm" method="POST">
+                            <div class="form-group">
+                                <label class="form-label">Current Password</label>
+                                <div class="input-with-icon">
+                                    <input type="password" class="form-control" 
+                                           name="current_password" 
+                                           placeholder="Enter current password"
+                                           id="currentPassword"  
+                                           required>
+                                    <i class="fas fa-eye input-icon toggle-password"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">New Password</label>
+                                <div class="input-with-icon">
+                                    <input type="password" class="form-control" 
+                                           name="new_password"
+                                           id="newPassword"  
+                                           placeholder="Enter new password" 
+                                           required
+                                           minlength="8">
+                                    <i class="fas fa-eye input-icon toggle-password"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Confirm New Password</label>
+                                <div class="input-with-icon">
+                                    <input type="password" class="form-control" 
+                                           name="confirm_password" 
+                                           id="confirmPassword" 
+                                           placeholder="Confirm new password" 
+                                           required
+                                           minlength="8">
+                                    <i class="fas fa-eye input-icon toggle-password"></i>
+                                </div>
+                            </div>
+                            <button type="submit" class="save-btn">Change Password</button>
+                            <div id="passwordMessage" class="message mt-2"></div>
+                        </form>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3 class="settings-title">Two-Factor Authentication</h3>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>Email Verification</h4>
+                                <p>Receive a code via email when logging in</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>SMS Verification</h4>
+                                <p>Receive a code via SMS when logging in</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>Authenticator App</h4>
+                                <p>Use an authenticator app for 2FA</p>
+                            </div>
+                            <div class="security-action">
+                                <button class="action-btn secondary" style="padding: 8px 12px; font-size: 12px;">
+                                    Setup
+                                </button>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3 class="settings-title">Recent Devices</h3>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>MacBook Pro (Chrome)</h4>
+                                <p>New York, USA • Just now</p>
+                            </div>
+                            <button class="action-btn danger" style="padding: 8px 12px; font-size: 12px;">
+                                Logout
+                            </button>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>iPhone 13 (Safari)</h4>
+                                <p>New York, USA • 2 hours ago</p>
+                            </div>
+                            <button class="action-btn danger" style="padding: 8px 12px; font-size: 12px;">
+                                Logout
+                            </button>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>Windows PC (Firefox)</h4>
+                                <p>Chicago, USA • 1 week ago</p>
+                            </div>
+                            <button class="action-btn danger" style="padding: 8px 12px; font-size: 12px;">
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Privacy Tab -->
+                <div class="settings-content" id="privacy-tab">
+                    <div class="settings-group">
+                        <h3 class="settings-title">Privacy Settings</h3>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>Profile Visibility</h4>
+                                <p>Who can see your profile information</p>
+                            </div>
+                            <select class="form-control" style="width: auto; min-width: 120px;">
+                                <option>Public</option>
+                                <option>Friends Only</option>
+                                <option selected>Private</option>
+                            </select>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>Transaction History</h4>
+                                <p>Who can see your transaction history</p>
+                            </div>
+                            <select class="form-control" style="width: auto; min-width: 120px;">
+                                <option>Public</option>
+                                <option selected>Friends Only</option>
+                                <option>Private</option>
+                            </select>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>Data Sharing</h4>
+                                <p>Allow sharing of anonymized data for analytics</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>Personalized Ads</h4>
+                                <p>Allow personalized advertising based on your activity</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3 class="settings-title">Danger Zone</h3>
+                        <div class="danger-zone">
+                            <div class="danger-title">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Warning</span>
+                            </div>
+                            <p class="danger-text">
+                                These actions are irreversible. Please proceed with caution.
+                            </p>
+                            <div class="form-group">
+                                <button class="action-btn danger" id="logoutBtn" style="width: 100%;">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </div>
+                            <div class="form-group">
+                                <button class="action-btn danger" id="deleteAccountBtn" style="width: 100%;">
+                                    <i class="fas fa-trash-alt"></i> Delete Account Permanently
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Photo Modal -->
+    <div class="modal" id="photoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Update Profile Photo</h3>
+                <button class="modal-close" id="closePhotoModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="width: 150px; height: 150px; border-radius: 50%; overflow: hidden; margin: 0 auto 20px; border: 5px solid var(--gray-light);">
+                        <img id="photoPreview" src="https://randomuser.me/api/portraits/men/32.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <input type="file" id="photoUpload" accept="image/*" style="display: none;">
+                    <button class="action-btn secondary" onclick="document.getElementById('photoUpload').click()" style="margin-right: 10px;">
+                        <i class="fas fa-upload"></i> Upload New Photo
+                    </button>
+                    <button class="action-btn danger">
+                        <i class="fas fa-trash-alt"></i> Remove Photo
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn secondary" id="cancelPhotoBtn">
+                    Cancel
+                </button>
+                <button class="action-btn primary">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Delete Account</h3>
+                <button class="modal-close" id="closeDeleteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 15px;">Are you sure you want to delete your account? This action cannot be undone.</p>
+                <div class="form-group">
+                    <label class="form-label">Enter your password to confirm</label>
+                    <div class="input-with-icon">
+                        <input type="password" class="form-control" placeholder="Your password" id="passwordConfirm">
+                        <i class="fas fa-eye input-icon toggle-password"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn secondary" id="cancelDeleteBtn">
+                    Cancel
+                </button>
+                <button class="action-btn danger " id="deletemyaccount">
+                    Delete My Account
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+</body>
+</html>
