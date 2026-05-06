@@ -83,12 +83,6 @@ The application is configured to use MySQL. If you prefer to use SQLite for deve
 
 The database tables will be automatically created upon the first run of the application if they do not exist.
 
-## Screenshots
-
-*(Add screenshots of your application here)*
-- **Dashboard View**: `![Dashboard](path/to/image)`
-- **Reports View**: `![Reports](path/to/image)`
-
 ## Future Improvements
 
 - Add support for multiple currencies
